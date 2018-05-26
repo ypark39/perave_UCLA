@@ -17,7 +17,10 @@ Z0 = 376.73;                                                     % Impedance of 
 
 %% Load the User Determined initial conditions
 clear power radfield thetap gammap bunch
-param.sigma_t = 125e-15;
+param.sigma_t = 125e-14;
+param.use3Dcorrection  = 1;
+param.beamdistribution = 0;
+param.laserdistribution = 0;
 recirculate = 0;
 tapering_strength = 2;
 t1 = tic;
@@ -46,7 +49,7 @@ sigma_omega = 10;
 firstpass =1;
 tapering_strength = 2;
 
-for npasses = 1:2
+for npasses = 1:1
     clear power radfield thetap gammap bunch
     t0 = tic;
     perave_core_v6;
