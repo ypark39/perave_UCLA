@@ -17,17 +17,17 @@ Z0 = 376.73;                                                     % Impedance of 
 
 %% Load the User Determined initial conditions
 clear power radfield thetap gammap bunch
-param.sigma_t = 125e-14;
+param.sigma_t = 1e-12;
 param.use3Dcorrection  = 1;
-param.beamdistribution = 0;
-param.laserdistribution = 0;
+param.beamdistribution = 1;       % Using GENESIS flag: 2-uniform 1-gaussian
+param.laserdistribution = 1;         % Using GENESIS flag: 2-uniform 1-gaussian
 recirculate = 0;
-tapering_strength = 2;
 t1 = tic;
 Perave_User_Input_osc;
 
 %% Compute the undulator field
 compute_undulator_field_v5h
+
 %% Calculate 1-D FEL parameters
 rho1D = 1/param.gamma0*(1/8*param.I/IA*param.K.^2/param.sigmax^2/param.ku^2)^(1/3);
 Lgain = param.lambdau/(4*sqrt(3)*pi*rho1D);
@@ -42,12 +42,16 @@ if param.tapering
     bunchlength_rms = param.sigma_t;
     peakcurrent = param.I;
 end
+calculate_3Dcorrection; 
+
 %% Run the main integration routine
 cavitydetuning = -4;
 transmission = 0.6;
 sigma_omega = 10;
 firstpass =1;
-tapering_strength = 2;
+tapering_strength = 2; % 0 max of slices at time 0 
+                                    % 1 max of slices
+                                    % 2 avg of slices
 
 for npasses = 1:1
     clear power radfield thetap gammap bunch
@@ -89,7 +93,9 @@ plot(max(rad_vs_und),'b')
 figure(101)
 plot([1:1:param.Nsnap]*param.stepsize,rad_vs_und(:,end),'r')
 xlim([0,param.Nsnap*param.stepsize])
+title('Radiation energy along undulator')
 figure(102)
 plot(PL)
+title 'pulselength'
 
 

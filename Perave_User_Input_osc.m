@@ -62,8 +62,8 @@ betax=4;
 emitx=4e-6;
 charge = 350e-12;
 %param.sigma_t = 40e-15;
-param.I = charge/sqrt(2*pi)/param.sigma_t                                             % beam current 
-param.sigmax = sqrt(betax*emitx/gamma0);                  % beam radius
+param.I = charge/sqrt(2*pi)/param.sigma_t              % beam current 
+param.sigmax = sqrt(betax*emitx/gamma0);            % beam radius
 param.A_e = 2*pi*param.sigmax^2;                          % beam cross section 
 Simulation_temporal_window=param.nslices*param.zsep*param.lambda0/c;
 %% Simplifying constants

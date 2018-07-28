@@ -10,14 +10,14 @@ p1 = zeros(Np,1);
 
 tslice = (1:param.nslices)*param.lambda0*param.zsep/c;
 
-if (param.beamdistribution == 2)
+if (param.beamdistribution == 1)
     profile_b = exp(-(tslice-tslice(end)/2).^2/2/param.sigma_t^2);
 else
     profile_b(1:param.nslices) = 0;
     profile_b(abs(tslice-tslice(end)/2)<param.sigma_t) = 1;
 end
 
-if (param.laserdistribution == 2)
+if (param.laserdistribution == 1)
     profile_l = exp(-(tslice-param.slippage).^2/2/param.sigma_l^2);
 else
     profile_l(1:param.nslices) = 0;
