@@ -85,13 +85,13 @@ xlabel('z')
 ylabel('trapped fraction')
 plot([1:1:param.Nsnap-1]*param.stepsize,trap)
 
-for ij=1:param.Nsnap
+for ij=1:param.Nsnap-1
 meanenergy(ij)=sum(mean(gammap(ij,:,:),3).*profile_b)/sum(profile_b);
 end
 
 % 
 subplot(2,3,6)
-plot([1:1:param.Nsnap]*param.stepsize,meanenergy)
+plot([1:1:param.Nsnap-1]*param.stepsize,meanenergy)
 xlabel('z')
 ylabel('\gamma')
 xlim([0,param.Nsnap*param.stepsize])

@@ -45,35 +45,16 @@ end
 calculate_3Dcorrection; 
 
 %% Run the main integration routine
-cavitydetuning = 12;      % In units of zsep
+cavitydetuning = -5;      % In units of zsep
 transmission = 0.7;        % Power transmission through one cavity pass 
                                      % losses = 1 - transmission
-sigma_omega = 5;       % Filter bandwidth
+sigma_omega = 8;       % Filter bandwidth
 firstpass =1;
 tapering_strength = 2; % 0 max of slices at time 0 
                                     % 1 max of slices
                                     % 2 avg of slices
-%% Filter definition
-    jfreq = 1:param.nslices;
-    filter = exp(-(jfreq-param.nslices/2).^2/2/sigma_omega^2);
-    for jfreq = 1:param.nslices;
-    y = (jfreq-param.nslices/2)/sigma_omega;
-    if(y>=1)
-        filter2(jfreq) = y-sqrt(y.^2-1);
-    elseif(y<=-1)
-        filter2(jfreq) = (y+sqrt(y.^2-1))*exp(-i*2*pi*0.999999);
-    else
-        filter2(jfreq) = y-i*sqrt(1-y.^2);
-    end
-    end
-    figure(200)
-    plot(filter)
-    hold on
-    plot(abs(filter2))
-    figure(201)
-    plot(angle(filter2))
- %% Oscillator loop
-for npasses = 1:50
+
+for npasses = 1:100
     clear power radfield thetap gammap bunch
     t0 = tic;
     perave_core_v6;
@@ -91,13 +72,17 @@ for npasses = 1:50
     oldfield(1,1:1+cavitydetuning+size(radfield,2)) = radfield(end,-cavitydetuning:end)*sqrt(transmission);    
     end
     pause(0.5)
-
     %%
+    jfreq = 1:param.nslices;
+    filter = exp(-(jfreq-param.nslices/2).^2/2/sigma_omega^2);
+    yom = jfreq-param.nslices/2;
+    filter2(1:yom-sigma_omega) = yom./sigma_omega-sqrt((yom./sigma_omega).^2-1);
+    filter2(yom+sigma_omega) = yom./sigma_omega+sqrt((yom./sigma_omega).^2-1);
     figure(8)
     subplot(1,2,1)
-    plot(abs(fftshift(fft(oldfield)).*filter2));
+    plot(abs(fftshift(fft(oldfield))).*filter);
     subplot(1,2,2)
-    filterfield = ifft(ifftshift(fftshift(fft(oldfield) ).*filter2));
+    filterfield = ifft(ifftshift(fftshift(fft(oldfield) ).*filter));
     plot(power(end,:),'k')
     hold on
     plot(abs(filterfield).^2/377*param.A_e,'g')
