@@ -45,15 +45,15 @@ end
 calculate_3Dcorrection; 
 
 %% Run the main integration routine
-cavitydetuning = 12;      % In units of zsep
-transmission = 0.7;        % Power transmission through one cavity pass 
-                                     % losses = 1 - transmission
-sigma_omega = 5;       % Filter bandwidth
+cavitydetuning = -16;    % In units of zsep
+transmission = 0.66;      % Power transmission through one cavity pass 
+                                      % losses = 1 - transmission                                      
+sigma_omega = 0.003*param.nslices*param.zsep;     % Filter fractional bandwidth. 
 firstpass =1;
-tapering_strength = 2; % 0 max of slices at time 0 
-                                    % 1 max of slices
-                                    % 2 avg of slices
-%% Filter definition
+tapering_strength = 2;   % 0 max of slices at time 0 
+                                      % 1 max of slices
+                                      % 2 avg of slices
+%% Filter definition (Filter2 is a complex transfer function. Cavity detuning needs to be adjusted to 12)
     jfreq = 1:param.nslices;
     filter = exp(-(jfreq-param.nslices/2).^2/2/sigma_omega^2);
     for jfreq = 1:param.nslices;
@@ -61,19 +61,28 @@ tapering_strength = 2; % 0 max of slices at time 0
     if(y>=1)
         filter2(jfreq) = y-sqrt(y.^2-1);
     elseif(y<=-1)
-        filter2(jfreq) = (y+sqrt(y.^2-1))*exp(-i*2*pi*0.999999);
+        filter2(jfreq) = (y+sqrt(y.^2-1));
     else
-        filter2(jfreq) = y-i*sqrt(1-y.^2);
+        filter2(jfreq) = y+i*sqrt(1-y.^2);
     end
-    end
+        omega_m=param.nslices/2;
+        Q = 1/sigma_omega;
+        filter3(jfreq) = 1i*jfreq/Q / (omega_m^2-jfreq^2+1i*jfreq/Q);   
+    end    
+    filterdelay = round(param.nslices/2/pi/sigma_omega);
     figure(200)
     plot(filter)
     hold on
     plot(abs(filter2))
+    plot(abs(filter3),'k')
+    hold off
     figure(201)
     plot(angle(filter2))
+    hold on
+    plot(angle(filter3),'k')
+    hold off
  %% Oscillator loop
-for npasses = 1:50
+for npasses = 1:100
     clear power radfield thetap gammap bunch
     t0 = tic;
     perave_core_v6;
@@ -95,9 +104,9 @@ for npasses = 1:50
     %%
     figure(8)
     subplot(1,2,1)
-    plot(abs(fftshift(fft(oldfield)).*filter2));
+    plot(abs(fftshift(fft(oldfield)).*filter3));
     subplot(1,2,2)
-    filterfield = ifft(ifftshift(fftshift(fft(oldfield) ).*filter2));
+    filterfield = ifft(ifftshift(fftshift(fft(oldfield) ).*filter3));
     plot(power(end,:),'k')
     hold on
     plot(abs(filterfield).^2/377*param.A_e,'g')
@@ -124,4 +133,6 @@ title 'pulselength'
 figure(103)
 plot(Eff)
 
+figure(300)
+contourf([1:size(rad_vs_beam,1)]*param.zsep*param.lambda0/c,[1:100],rad_vs_beam')
 

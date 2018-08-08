@@ -69,7 +69,7 @@ param.waist = sqrt(A_mode*2/pi);
 zr = pi*param.waist^2/param.lambda0;                          % Rayleigh length of seed (m)
 param.E0 = sqrt(2*P0/c/eps0/A_mode/2);                        % Assume circular polarization
 param.slippage = param.nslices/2*param.lambda0*param.zsep/c;
-param.sigma_l = 1200e-15;
+param.sigma_l = 2400e-15;
 
 %% Simplifying constants
 param.chi2 = e0/me/c^2;
