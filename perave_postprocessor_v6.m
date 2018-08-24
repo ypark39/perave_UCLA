@@ -103,10 +103,13 @@ if param.itdp
     figure(3)
     subplot(1,3,1)
     contour(abs(bunch))
+    title('bunching factor')
     subplot(1,3,2)
     contour(angle(bunch))
+    title('bunch phase')
     subplot(1,3,3)
     contour(power)  
+    title('power')
 end
 
 %% Energy calculations 

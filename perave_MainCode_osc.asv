@@ -138,9 +138,9 @@ for npasses = 1:100
     legend('power','filterfield','oldfield','profile_b')
 %     oldfield = filterfield;
     firstpass = 0;                                  % Start recirculation
-        saveas(gcf,[figdir,'field_',num2str(npasses),'.png'])
+        saveas(gcf,[figdir,'run',num2str(npasses),'_field.png'])
         figure(2)
-                saveas(gcf,[figdir,'outfig_',num2str(npasses),'.png'])
+                saveas(gcf,[figdir,'run',num2str(npasses),'_output.png'])
 
         figure(3)
                         saveas(gcf,[figdir,'contour_',num2str(npasses),'.png'])
