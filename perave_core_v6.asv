@@ -138,13 +138,9 @@ for ij = 1:param.Nsnap-1  % takes Nsnap snapshots along length of undulator
             
             Kz(ij+1)=Kz(ij)-param.stepsize/const_resp*Klz.*sin(res_phase(ij));
             elseif updatetapering==-1
-           
                 Kz=Kz_save(:,npasses-1);
             end
             
-            if loadtapering==1
-                Kz=Kz_load;
-            end
             gammares(ij+1) = sqrt (param.lambdau.*(1+Kz(ij).^2) / 2/param.lambda0);            
             telapsed = toc(tstart);
             total_simtime = total_simtime+telapsed;

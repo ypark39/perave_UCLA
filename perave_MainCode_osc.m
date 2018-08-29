@@ -38,7 +38,7 @@ if param.tapering
     a1 = 2*param.lambda0/param.lambdau*e0*param.E0/me/c^2*sin(param.psir);
     a2 = ((2*param.lambda0/param.lambdau)^1.5)*Z0*e0*param.I*sin(param.psir)^2*capture_fraction*bunching_factor/2/param.A_e/me/c^2;
     pmax_prediction=P0+param.K*(a1*lwig+a2*lwig^2/2)/(1+param.K^2)*param.Ee*param.I*capture_fraction;
-    etamax = param.K*(a1*lwig+a2*lwig^2/2)/(1+param.K^2)*capture_fraction
+    etamax = param.K*(a1*lwig+a2*lwig^2/2)/(1+param.K^2)*capture_fraction;
     bunchlength_rms = param.sigma_t;
     peakcurrent = param.I;
 end
@@ -51,20 +51,20 @@ transmission = 0.66;      % Power transmission through one cavity pass
 sigma_omega = 0.003*param.nslices*param.zsep;     % Filter fractional bandwidth. 
 
 firstpass =1;
-tapering_strength = 2;   % 0 max of slices at time 0 
+tapering_strength = 1;   % 0 max of slices at time 0 
                                       % 1 max of slices
                                       % 2 avg of slices
 %% Filter definition (Filter2 is a complex transfer function. Cavity detuning needs to be adjusted to 12)
     jfreq = 1:param.nslices;
     filter = exp(-(jfreq-param.nslices/2).^2/2/sigma_omega^2);
-    for jfreq = 1:param.nslices;
+    for jfreq = 1:param.nslices
     y = (jfreq-param.nslices/2)/sigma_omega;
     if(y>=1)
         filter2(jfreq) = y-sqrt(y.^2-1); %ryan lindberg (KJ Kim) bragg mirror
     elseif(y<=-1)
         filter2(jfreq) = (y+sqrt(y.^2-1));
     else
-        filter2(jfreq) = y+i*sqrt(1-y.^2);
+        filter2(jfreq) = y+1i*sqrt(1-y.^2);
     end
         omega_m=param.nslices/2;
         Q = 0.3;
@@ -91,11 +91,12 @@ tapering_strength = 2;   % 0 max of slices at time 0
     hold off
     
     
-   
-
+   updatetapering=0;
+    loadtapering=0;
+   load('D:\Matlab_data\TESSO_Kzload.mat');
  %% Oscillator loop
 for npasses = 1:100
-    clear power radfield thetap gammap bunch
+    clear power radfield thetap gammap bunch 
     t0 = tic;
     perave_core_v6;
     disp(['Simulation time = ',num2str(toc(t0)./60),' min'])
@@ -136,7 +137,7 @@ for npasses = 1:100
     hold off
     pause(0.5)
     legend('power','filterfield','oldfield','profile_b')
-%     oldfield = filterfield;
+    oldfield = filterfield;
     firstpass = 0;                                  % Start recirculation
         saveas(gcf,[figdir,'field_',num2str(npasses),'.png'])
         figure(2)
@@ -147,7 +148,18 @@ for npasses = 1:100
 
         figure(4)
                                 saveas(gcf,[figdir,'spec_',num2str(npasses),'.png'])
-
+                                
+                                if npasses>1 & abs((mean(rad_vs_beam(:,npasses))-mean(rad_vs_beam(:,npasses-1)))/mean(rad_vs_beam(:,npasses)))<.01
+                                    updatetapering=1;
+                                else
+                                    updatetapering=0;
+                                end
+                                
+                                if Eff>0.25
+                                    updatetapering=0;
+                                end
+                                    
+Kz_save(:,npasses)=Kz;
 end
 %% Post-process stuff
 figure(100)
