@@ -125,7 +125,7 @@ for ij = 1:param.Nsnap-1  % takes Nsnap snapshots along length of undulator
             bunch(ij,:)=(mean(exp(1j.*thetap(ij,:,:)),3));
             
             % Compute undulator field at next step (constant res phase)
-            if (firstpass || updatetapering)
+            if param.tapering~=0 & (firstpass )
                  switch tapering_strength
                      case 0 
                          Klz = max(abs(radfield(1,:)));
@@ -137,9 +137,11 @@ for ij = 1:param.Nsnap-1  % takes Nsnap snapshots along length of undulator
 %         Klz = sum(abs(radfield(ij,:)).*profile_b(:)')/sum(profile_b)/8
             
             Kz(ij+1)=Kz(ij)-param.stepsize/const_resp*Klz.*sin(res_phase(ij));
-            elseif updatetapering==-1
+%             elseif updatetapering==-1
            
-                Kz=Kz_save(:,npasses-1);
+%                 Kz=Kz_save(:,npasses-1);
+            else
+                Kz(ij+1)=Kz(ij);
             end
             
             if loadtapering==1

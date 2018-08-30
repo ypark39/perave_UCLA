@@ -76,17 +76,16 @@ xlabel('z')
 ylabel('Bunching Factor')
 
 subplot(2,3,5)
-if param.tapering~=0
+if tap
 for ij = 1:param.Nsnap-1
     bucket_amp_rel =    2*sqrt(Kz(ij)*param.chi2*param.E0*param.lambda0/2/pi/(1+Kz(ij)^2));
     idx = squeeze(gammares(ij)*(1+4*bucket_height*bucket_amp_rel)>gammap(ij,:,:));
     trap(ij) = sum(sum(idx,2)/param.Np.*profile_b')/sum(profile_b);
 end
-
 xlabel('z')
 ylabel('trapped fraction')
 plot([1:1:param.Nsnap-1]*param.stepsize,trap)
-end
+
 for ij=1:param.Nsnap
 meanenergy(ij)=sum(mean(gammap(ij,:,:),3).*profile_b)/sum(profile_b);
 end

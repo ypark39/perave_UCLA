@@ -23,10 +23,15 @@ param.beamdistribution = 2;       % Using GENESIS flag: 2-uniform 1-gaussian
 param.laserdistribution = 1;         % Using GENESIS flag: 2-uniform 1-gaussian
 recirculate = 0;
 t1 = tic;
-Perave_User_Input_osc;
+Perave_User_Input_osc_pb;
 
 %% Compute the undulator field
 compute_undulator_field_v5h
+loadtapering=0;
+firstpass =1;
+perave_core_v6;
+
+
 
 %% Calculate 1-D FEL parameters
 rho1D = 1/param.gamma0*(1/8*param.I/IA*param.K.^2/param.sigmax^2/param.ku^2)^(1/3);
@@ -44,16 +49,19 @@ if param.tapering
 end
 calculate_3Dcorrection; 
 
+
+
 %% Run the main integration routine
 cavitydetuning = -20;    % In units of zsep
 transmission = 0.66;      % Power transmission through one cavity pass 
                                       % losses = 1 - transmission                                      
 sigma_omega = 0.003*param.nslices*param.zsep;     % Filter fractional bandwidth. 
 
-firstpass =1;
-tapering_strength = 1;   % 0 max of slices at time 0 
+
+tapering_strength = 2;   % 0 max of slices at time 0 
                                       % 1 max of slices
                                       % 2 avg of slices
+
 %% Filter definition (Filter2 is a complex transfer function. Cavity detuning needs to be adjusted to 12)
     jfreq = 1:param.nslices;
     filter = exp(-(jfreq-param.nslices/2).^2/2/sigma_omega^2);
@@ -90,11 +98,20 @@ tapering_strength = 1;   % 0 max of slices at time 0
     plot(angle(filter3),'k')
     hold off
     
-    
+    Perave_User_Input_osc_pb;
+
    updatetapering=0;
-    loadtapering=0;
-   load('D:\Matlab_data\TESSO_Kzload.mat');
+%     loadtapering=0;
+%    load('D:\Matlab_data\TESSO_Kzload.mat');
  %% Oscillator loop
+%  Kz_load=2.8202*ones(1,8);
+%  loadtapering=0;
+% npasses=1;
+% perave_core_v6;
+% perave_postprocessor_v6;
+% 
+
+
 for npasses = 1:100
     clear power radfield thetap gammap bunch 
     t0 = tic;
@@ -149,16 +166,25 @@ for npasses = 1:100
         figure(4)
                                 saveas(gcf,[figdir,'spec_',num2str(npasses),'.png'])
                                 
-                                if npasses>1 & abs((mean(rad_vs_beam(:,npasses))-mean(rad_vs_beam(:,npasses-1)))/mean(rad_vs_beam(:,npasses)))<.01
-                                    updatetapering=1;
-                                else
-                                    updatetapering=0;
-                                end
-                                
-                                if Eff>0.25
-                                    updatetapering=0;
-                                end
-                                    
+%                                 if npasses>1 & abs((mean(rad_vs_beam(:,npasses))-mean(rad_vs_beam(:,npasses-1)))/mean(rad_vs_beam(:,npasses)))<.01
+%                                     updatetapering=1;
+%                                 else
+%                                     updatetapering=-1;
+%                                 end
+%                                 
+%                                 if Eff>0.25
+%                                     updatetapering=-1;
+%                                 end
+
+if npasses>1 & npasses<50
+    updatetapering=-1;
+elseif npasses==50
+    updatetapering=1;
+else 
+    updatetapering=-1;
+end
+    
+%                                     
 Kz_save(:,npasses)=Kz;
 end
 %% Post-process stuff
