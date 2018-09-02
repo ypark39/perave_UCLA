@@ -1,5 +1,4 @@
 %% Perave_postprocessor
-close all
 kw=2*pi/param.lambdau;
 hbar=6.582e-16;
 zpos= [1:param.Nsnap]*param.stepsize;
@@ -38,9 +37,9 @@ end
 figure(2)
 title('Simulation Output')
 subplot(2,3,1)
-semilogy(zpos,mean(power,2),'b')
+plot(zpos,mean(power,2),'b')
 hold on
-semilogy(zpos,max(power'),'r')
+plot(zpos,max(power'),'r')
 xlim([0,zpos(end)])
 title('Radiation Power along the beam')
 legend('Avg','Max')

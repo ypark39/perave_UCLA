@@ -27,10 +27,17 @@ Perave_User_Input_osc_pb;
 
 %% Compute the undulator field
 compute_undulator_field_v5h
+firstpass=1;
 loadtapering=0;
-firstpass =1;
-perave_core_v6;
+% perave_core_v6;
+% perave_R56;
+Perave_User_Input_osc;
+% param.prebunching=1; %Turnoff prebuncher
 
+compute_undulator_field_v5h
+
+% param.nslices=size(oldfield,2);
+firstpass=1;
 
 
 %% Calculate 1-D FEL parameters
@@ -52,7 +59,7 @@ calculate_3Dcorrection;
 
 
 %% Run the main integration routine
-cavitydetuning = -20;    % In units of zsep
+cavitydetuning = -30;    % In units of zsep
 transmission = 0.66;      % Power transmission through one cavity pass 
                                       % losses = 1 - transmission                                      
 sigma_omega = 0.003*param.nslices*param.zsep;     % Filter fractional bandwidth. 
@@ -62,43 +69,7 @@ tapering_strength = 2;   % 0 max of slices at time 0
                                       % 1 max of slices
                                       % 2 avg of slices
 
-%% Filter definition (Filter2 is a complex transfer function. Cavity detuning needs to be adjusted to 12)
-    jfreq = 1:param.nslices;
-    filter = exp(-(jfreq-param.nslices/2).^2/2/sigma_omega^2);
-    for jfreq = 1:param.nslices
-    y = (jfreq-param.nslices/2)/sigma_omega;
-    if(y>=1)
-        filter2(jfreq) = y-sqrt(y.^2-1); %ryan lindberg (KJ Kim) bragg mirror
-    elseif(y<=-1)
-        filter2(jfreq) = (y+sqrt(y.^2-1));
-    else
-        filter2(jfreq) = y+1i*sqrt(1-y.^2);
-    end
-        omega_m=param.nslices/2;
-        Q = 0.3;
-        filter3(jfreq) = 1i*jfreq/Q / (omega_m^2-jfreq^2+1i*jfreq/Q);   %dispersion
-    end
-
     
-    filterdelay = round(param.nslices/2/pi/sigma_omega);
-    figure(200)
-    plot(filter)
-    hold on
-    plot(abs(filter2))
-    plot(abs(filter3),'k')
-    hold off
-    legend('filter','filter2','filter3')
-    GIT_dir
-        figdir=[datadir,'peraveosc\'];
-        mkdir(figdir);
-        saveas(gcf,[figdir,'filter.png'])
-    figure(201)
-    plot(angle(filter2))
-    hold on
-    plot(angle(filter3),'k')
-    hold off
-    
-    Perave_User_Input_osc_pb;
 
    updatetapering=0;
 %     loadtapering=0;
@@ -110,20 +81,60 @@ tapering_strength = 2;   % 0 max of slices at time 0
 % perave_core_v6;
 % perave_postprocessor_v6;
 % 
-
+rad_vs_beam=zeros(param.nslices,100);
 
 for npasses = 1:100
-    clear power radfield thetap gammap bunch 
+%     clear power radfield thetap gammap bunch 
+clear power radfield bunch
     t0 = tic;
+    
+Perave_User_Input_osc_pb;
+if ~firstpass
+param.nslices=size(thetap,2);
+end
+
+
+%% Compute the undulator field
+compute_undulator_field_v5h
+loadtapering=0;
+% clear power radfielsd bunch
+
+perave_core_v6;
+perave_R56;
+figure(7)
+    title(titlestr);
+    subplot(1,2,1)
+        hold on
+      plot(abs(fftshift(fft(oldfield))),'r');
+
+  
+        legend('oldfield')
+
+    subplot(1,2,2)
+
+    plot(abs(oldfield).^2/max(abs(oldfield).^2),'r')
+            hold on
+
+    plot(profile_b,'b')
+    hold off
+blist(npasses)=newbfactor;
+Perave_User_Input_osc;
+% param.prebunching=1; %Turnoff prebuncher
+if ~firstpass
+param.nslices=size(thetap,2);
+end
+
+compute_undulator_field_v5h
+
     perave_core_v6;
     disp(['Simulation time = ',num2str(toc(t0)./60),' min'])
     perave_postprocessor_v6   
     rad_vs_und(:,npasses) = sum(power,2)*param.lambda0*param.zsep/c;
     
-    rad_vs_beam(:,npasses) = power(end,:);
+    rad_vs_beam([end-size(radfield,2)+1:end],npasses) = power(end,:);
     Eff(npasses) = Efficiency;
     PL(npasses) = pulselength;
-    oldfield(1:param.nslices) =0;
+    oldfield=zeros(1,param.nslices);
     
     if cavitydetuning>0
     oldfield(1,cavitydetuning+1:cavitydetuning+size(radfield,2)) = radfield(end,:)*sqrt(transmission);
@@ -131,6 +142,9 @@ for npasses = 1:100
     oldfield(1,1:1+cavitydetuning+size(radfield,2)) = radfield(end,-cavitydetuning:end)*sqrt(transmission);    
     end
     pause(0.5)
+    
+    
+    perave_filter;
 
     %%
     figure(8)
@@ -219,3 +233,6 @@ title('rad vs beam')
 colorscheme=cool(size(rad_vs_und,2));
 hold on
 
+figure(104)
+plot(blist)
+title('bunch factor in each run')

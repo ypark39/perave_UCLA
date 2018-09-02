@@ -1,7 +1,9 @@
 % Perave_code_user input
 %%%%User entered parameters%%%%%
 %% from Duris et al. TESSO paper 
-
+%% Prebuncher Parameters
+param.R56buncher=16e-6;16e-6;
+param.phaseshift=1.8;
 %% Undulator parameters
 param.lambdau = 3.2e-2;                                 % undulator period (m)
 param.K = 2.82; %e0*Bfield*/me/c/ku;               % RMS undulator parameter
@@ -20,14 +22,14 @@ param.changeresphase = 0;
 saveoutput=0;
 % Set simulation length and # of snapshots
 param.delz=1;
-param.und_periods = round(lwig/param.lambdau);                         % number of undulator periods to simulate
+param.und_periods = round(lwig/param.lambdau);                         % number of undulator periods to simulate;
 param.Nsnap = round(lwig/param.lambdau/param.delz);                % number of snapshots to take over the length of the undulator
-param.zsep = 1;                                                              
+param.zsep = 4;                                                              
 Nslip=round(param.Nsnap/param.zsep);
 param.shotnoise = 1;
 param.lambda0 = 266e-9;                                    % seed wavelength (m)
 param.k = 2*pi/param.lambda0;                                     % wavenumber in free space
-param.nslices =4*Nslip+4*round(param.sigma_t/param.zsep/param.lambda0*c);
+param.nslices =400+4*Nslip+4*round(param.sigma_t/param.zsep/param.lambda0*c);
 
 if(~param.itdp)
     param.nslices = 1;
@@ -44,7 +46,7 @@ param.Ee = gamma0*me*c^2/e0;                  % Total e-beam energy (eV)
 energyspread = 1*20e-15/param.sigma_t;                                       % Absolute energy spread MeV
 param.deltagammarel = energyspread/gamma0/0.511;          % Relative energy spread dgamma/gamma
 param.deltagamma = gamma0*param.deltagammarel;
-param.bunch = 0.7;                                                   % Initial bunching factor
+param.bunch = 0.5;                                                   % Initial bunching factor
 param.bunchphase = -param.psir-pi/2;                     % Initial bunching phase
 param.buncherAmp = 5;
 
@@ -68,9 +70,10 @@ A_mode = param.A_e;                                                     % 1D cod
 param.waist = sqrt(A_mode*2/pi);
 zr = pi*param.waist^2/param.lambda0;                          % Rayleigh length of seed (m)
 param.E0 = sqrt(2*P0/c/eps0/A_mode/2);                        % Assume circular polarization
-param.slippage = param.nslices/2*param.lambda0*param.zsep/c;
+param.slippage = (param.nslices+112)/2*param.lambda0*param.zsep/c;
 param.sigma_l = 2400e-15;
 
 %% Simplifying constants
 param.chi2 = e0/me/c^2;
 param.chi1=mu0*c/2*param.I/param.A_e;
+
