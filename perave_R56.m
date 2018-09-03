@@ -14,7 +14,7 @@ thetapend=thetap(end,:,:);
 gammapend=reshape(gammapend,[size(gammap,2),param.Np]);
 thetapend=reshape(thetapend,[size(gammap,2),param.Np]);
 thetap_new=reshape(thetap_new,[size(gammap,2),param.Np]);
-figure
+figure(8)
 plot(thetapend(round(islice/2),:),gammapend(round(islice/2),:))
 hold on
 plot(thetap_new(round(islice/2),:),gammapend(round(islice/2),:))
@@ -27,18 +27,18 @@ title(titlestr);
 
 %%%slippage in prebuncher
 radfield_new=[];
-R56slippage = round(param.R56buncher/param.lambda0)*2;
+R56slippage = round(param.R56buncher/param.lambda0)*2/param.zsep;
     radfield_new(1,1:R56slippage-1)=0;
 %     if firstpass
     radfield_new(1,R56slippage:size(radfield,2)) = radfield(end,1:(size(radfield,2)-R56slippage+1));
 %     else
 %             radfield_new(1,R56slippage:size(oldfield,2)) = oldfield(end,1:(size(oldfield,2)-R56slippage+1));
 %     end
-    figure
+    figure(9)
     plot(abs(radfield(end,:)));
     hold on
     plot(abs(radfield_new));
-    
+    hold off
 %     radfield_new(:,1:R56slippage)=[];
 
     oldfield=radfield_new;

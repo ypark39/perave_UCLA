@@ -27,8 +27,9 @@ Nslip=round(param.Nsnap/param.zsep);
 param.shotnoise = 1;
 param.lambda0 = 266e-9;                                    % seed wavelength (m)
 param.k = 2*pi/param.lambda0;                                     % wavenumber in free space
+if param.prebunching~=2
 param.nslices =4*Nslip+4*round(param.sigma_t/param.zsep/param.lambda0*c);
-
+end
 if(~param.itdp)
     param.nslices = 1;
 end

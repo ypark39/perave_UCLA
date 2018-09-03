@@ -131,7 +131,7 @@ compute_undulator_field_v5h
     perave_postprocessor_v6   
     rad_vs_und(:,npasses) = sum(power,2)*param.lambda0*param.zsep/c;
     
-    rad_vs_beam([end-size(radfield,2)+1:end],npasses) = power(end,:);
+    rad_vs_beam(:,npasses) = power(end,:);
     Eff(npasses) = Efficiency;
     PL(npasses) = pulselength;
     oldfield=zeros(1,param.nslices);
@@ -147,7 +147,7 @@ compute_undulator_field_v5h
     perave_filter;
 
     %%
-    figure(8)
+    figure(10)
     titlestr=sprintf('npass=%.f cavitydetuning=%.2f transmission=%.2f Q=%.2e',npasses,cavitydetuning,transmission,Q);
     title(titlestr);
     subplot(1,2,1)
@@ -214,7 +214,7 @@ plot([1:1:param.Nsnap]*param.stepsize, meanenergy*charge*511000)
 xlim([0,param.Nsnap*param.stepsize])
 title('Radiation energy along undulator')
         saveas(gcf,[figdir,'final_radenergy.png'])
-
+hold off
 figure(102)
 plot(PL)
 title('pulselength')
@@ -235,4 +235,5 @@ hold on
 
 figure(104)
 plot(blist)
+hold off
 title('bunch factor in each run')

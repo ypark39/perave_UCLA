@@ -217,7 +217,7 @@ end
 % profile_b(1:Nslip)=[];
 % bunch(:,1:Nslip)=[];
 % end
-% Calculate radiation power 
+% Calculate radiation power     
 power=[];
 power(:,:) = abs(radfield(:,:)).^2/377*param.A_e;
 param.nslices=size(thetap,2);

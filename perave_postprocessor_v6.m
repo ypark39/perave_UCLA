@@ -43,7 +43,7 @@ plot(zpos,max(power'),'r')
 xlim([0,zpos(end)])
 title('Radiation Power along the beam')
 legend('Avg','Max')
-
+hold off
 if param.itdp
 subplot(2,3,2)
 plot([1:1:size(power,2)]*param.zsep*param.lambda0*1e15/3e8,power(end,:))
@@ -56,6 +56,7 @@ ylabel('Power [W]')
 legend('Final',sprintf(['Norm Initial ',num2str(P0/1e9),' GW']), sprintf(['Current profile ',num2str(param.I/1e3,3),' kA']),'Location','southeast')
 
 [powerspec,omega]=spectrum_calc(radfield(end,:),param.lambda0,param.zsep);
+hold off
 subplot(2,3,3)
 semilogy((omega+1)*hbar*2*pi*c/param.lambda0,powerspec,'b');    
 xlim([omega(1)+1,omega(end)+1]*hbar*2*pi*c/param.lambda0)    
