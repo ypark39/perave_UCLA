@@ -4,6 +4,12 @@
 function Eff = perave_opti(R56buncher, phaseshift, cavitydetuning, transmission)
 % clear all
 close all
+GIT_dir;
+figdir=[datadir,'perave_opti\'];
+if exist(figdir,'dir')==0
+    mkdir(figdir);
+end
+
 
 %% physical constants
 global c mu0 e0 me eps0 IA Z0
@@ -15,7 +21,7 @@ eps0 = 8.85418782e-12;                                           % eps_0
 mu0 = 1.256637e-6;                                               % mu_0
 IA = 17045;                                                      % Alfven current
 Z0 = 376.73;                                                     % Impedance of free space         
-
+power=[];
 %% Load the User Determined initial conditions
 clear power radfield thetap gammap bunch
 param.sigma_t = 3e-13/2;
@@ -82,9 +88,9 @@ tapering_strength = 2;   % 0 max of slices at time 0
 % perave_core_v6;
 % perave_postprocessor_v6;
 % 
-rad_vs_beam=zeros(param.nslices,100);
+rad_vs_beam=zeros(param.nslices,60);
 
-for npasses = 1:100
+for npasses = 1:6
 %     clear power radfield thetap gammap bunch 
 clear power radfield bunch
     t0 = tic;
@@ -171,15 +177,15 @@ compute_undulator_field_v5h
     legend('power','filterfield','oldfield','profile_b')
     oldfield = filterfield;
     firstpass = 0;                                  % Start recirculation
-        saveas(gcf,[figdir,'field_',num2str(npasses),'.png'])
+%         saveas(gcf,[figdir,'field_',num2str(npasses),'.png'])
         figure(2)
-                saveas(gcf,[figdir,'outfig_',num2str(npasses),'.png'])
+%                 saveas(gcf,[figdir,'outfig_',num2str(npasses),'.png'])
 
         figure(3)
-                        saveas(gcf,[figdir,'contour_',num2str(npasses),'.png'])
+%                         saveas(gcf,[figdir,'contour_',num2str(npasses),'.png'])
 
         figure(4)
-                                saveas(gcf,[figdir,'spec_',num2str(npasses),'.png'])
+%                                 saveas(gcf,[figdir,'spec_',num2str(npasses),'.png'])
                                 
 %                                 if npasses>1 & abs((mean(rad_vs_beam(:,npasses))-mean(rad_vs_beam(:,npasses-1)))/mean(rad_vs_beam(:,npasses)))<.01
 %                                     updatetapering=1;
@@ -191,22 +197,24 @@ compute_undulator_field_v5h
 %                                     updatetapering=-1;
 %                                 end
 
-if npasses>1 & npasses<50
-    updatetapering=-1;
-elseif npasses==50
-    updatetapering=1;
-else 
-    updatetapering=-1;
-end
+% if npasses>1 & npasses<50
+%     updatetapering=-1;
+% elseif npasses==50
+%     updatetapering=1;
+% else 
+%     updatetapering=-1;
+% end
     
 %                                     
 Kz_save(:,npasses)=Kz;
 end
+perave_opti_str=sprintf('Effmean=%.2f EffEnd=%.2f r56=%.2e ps=%.2f cd=%.f trans=%.2f ',mean(Eff),Eff(end),R56buncher,phaseshift,cavitydetuning,transmission);
+
 %% Post-process stuff
 figure(100)
 plot(max(rad_vs_und),'b')
 title('max rad vs und')
-        saveas(gcf,[figdir,'final_radvsund.png'])
+        saveas(gcf,[figdir,perave_opti_str,'final_radvsund.png'])
 
 figure(101)
 plot([1:1:param.Nsnap]*param.stepsize,rad_vs_und(:,end),'r')
@@ -214,22 +222,23 @@ hold on
 plot([1:1:param.Nsnap]*param.stepsize, meanenergy*charge*511000)
 xlim([0,param.Nsnap*param.stepsize])
 title('Radiation energy along undulator')
-        saveas(gcf,[figdir,'final_radenergy.png'])
+        saveas(gcf,[figdir,perave_opti_str,'final_radenergy.png'])
 hold off
 figure(102)
 plot(PL)
 title('pulselength')
-        saveas(gcf,[figdir,'final_pulselength.png'])
+        saveas(gcf,[figdir,perave_opti_str,'final_pulselength.png'])
 
 figure(103)
 plot(Eff)
 title('Eff')
-        saveas(gcf,[figdir,'final_eff.png'])
+
+        saveas(gcf,[figdir,perave_opti_str,'final_eff.png'])
 
 figure(300)
-contourf([1:size(rad_vs_beam,1)]*param.zsep*param.lambda0/c,[1:100],rad_vs_beam')
+contourf([1:size(rad_vs_beam,1)]*param.zsep*param.lambda0/c,[1:npasses],rad_vs_beam')
 title('rad vs beam')
-        saveas(gcf,[figdir,'final_beam.png'])
+        saveas(gcf,[figdir,perave_opti_str,'final_beam.png'])
 
 colorscheme=cool(size(rad_vs_und,2));
 hold on
@@ -238,4 +247,6 @@ figure(104)
 plot(blist)
 hold off
 title('bunch factor in each run')
+        saveas(gcf,[figdir,perave_opti_str,'bfactor.png'])
+
 end

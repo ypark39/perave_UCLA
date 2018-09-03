@@ -27,9 +27,6 @@
     hold off
     legend('filter','filter2','filter3')
     GIT_dir
-        figdir=[datadir,'peraveosc\'];
-        mkdir(figdir);
-        saveas(gcf,[figdir,'filter.png'])
     figure(201)
     plot(angle(filter2))
     hold on
