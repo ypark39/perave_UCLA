@@ -1,7 +1,7 @@
 %% PBPL PERiod AVErage 1D FEL simulation code %%
 %%% Input deck intended to be compatible with WafFEL, 1D period average, and GENESIS %%%
 %% P. Musumeci oscillator version %%
-function Eff = perave_opti(R56buncher, phaseshift, cavitydetuning, transmission)
+function meanEff = perave_opti(R56buncher, phaseshift, cavitydetuning, transmission)
 % clear all
 close all
 GIT_dir;
@@ -88,7 +88,7 @@ tapering_strength = 2;   % 0 max of slices at time 0
 % perave_core_v6;
 % perave_postprocessor_v6;
 % 
-npassmax=60;
+npassmax=3;
 rad_vs_beam=zeros(param.nslices,npassmax);
 
 for npasses = 1:npassmax
@@ -237,7 +237,7 @@ title('Eff')
         saveas(gcf,[figdir,perave_opti_str,'final_eff.png'])
 
 figure(300)
-contourf([1:size(rad_vs_beam,1)]*param.zsep*param.lambda0/c,[1:npasses],rad_vs_beam')
+contourf([1:size(rad_vs_beam,1)]*param.zsep*param.lambda0/c,[1:npassmax],rad_vs_beam')
 title('rad vs beam')
         saveas(gcf,[figdir,perave_opti_str,'final_beam.png'])
 
@@ -249,5 +249,5 @@ plot(blist)
 hold off
 title('bunch factor in each run')
         saveas(gcf,[figdir,perave_opti_str,'bfactor.png'])
-
+meanEff=-mean(Eff);
 end
