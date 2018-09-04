@@ -88,7 +88,7 @@ tapering_strength = 2;   % 0 max of slices at time 0
 % perave_core_v6;
 % perave_postprocessor_v6;
 % 
-npassmax=3;
+npassmax=60;
 rad_vs_beam=zeros(param.nslices,npassmax);
 
 for npasses = 1:npassmax
@@ -209,7 +209,7 @@ compute_undulator_field_v5h
 %                                     
 Kz_save(:,npasses)=Kz;
 end
-perave_opti_str=sprintf('Effmean=%.2f EffEnd=%.2f r56=%.2e ps=%.2f cd=%.f trans=%.2f ',mean(Eff),Eff(end),R56buncher,phaseshift,cavitydetuning,transmission);
+perave_opti_str=sprintf('Effmean=%.2e EffEnd=%.2e r56=%.2e ps=%.2f cd=%.f trans=%.2f ',mean(Eff),Eff(end),R56buncher,phaseshift,cavitydetuning,transmission);
 
 %% Post-process stuff
 figure(100)
