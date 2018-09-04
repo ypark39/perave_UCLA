@@ -28,8 +28,9 @@ else
 end
     
 %profile_b = heaviside(tslice-tslice(end)/2+param.sigma_t).*(1-heaviside(tslice-tslice(end)/2-param.sigma_t));
-
-radfield=ones(param.Nsnap,param.nslices)*param.E0;
+% if param.itdp==1
+radfield=ones(param.Nsnap,length(tslice))*param.E0;
+% end
 radfield(1,:) = profile_l*param.E0;
 % 
 if ~firstpass

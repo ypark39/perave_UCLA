@@ -14,7 +14,7 @@ param.psir = pi/6;
 
 %% Simulation control options
 param.phasespacemovie=0;
-param.itdp = 1;
+param.itdp = 0;
 param.prebunching = 2;   %0 = no prebuncher 1 = numeric prebunch 2 = prebunched by R56                                                                % set to 1 to start from a pre-bunched beam. 
 param.changeresphase = 0;
 saveoutput=0;

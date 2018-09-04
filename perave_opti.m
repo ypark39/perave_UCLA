@@ -1,7 +1,7 @@
 %% PBPL PERiod AVErage 1D FEL simulation code %%
 %%% Input deck intended to be compatible with WafFEL, 1D period average, and GENESIS %%%
 %% P. Musumeci oscillator version %%
-function meanEff = perave_opti(R56buncher, phaseshift, cavitydetuning, transmission)
+function meanEff = perave_opti(R56buncher, phaseshift, cavitydetuning, transmission,npassmax)
 % clear all
 close all
 GIT_dir;
@@ -88,7 +88,7 @@ tapering_strength = 2;   % 0 max of slices at time 0
 % perave_core_v6;
 % perave_postprocessor_v6;
 % 
-npassmax=60;
+% npassmax=60;
 rad_vs_beam=zeros(param.nslices,npassmax);
 
 for npasses = 1:npassmax
@@ -143,11 +143,14 @@ compute_undulator_field_v5h
     Eff(npasses) = Efficiency;
     PL(npasses) = pulselength;
     oldfield=zeros(1,param.nslices);
-    
-    if cavitydetuning>0
+    if param.itdp==1
+    if  cavitydetuning>0
     oldfield(1,cavitydetuning+1:cavitydetuning+size(radfield,2)) = radfield(end,:)*sqrt(transmission);
     else
     oldfield(1,1:1+cavitydetuning+size(radfield,2)) = radfield(end,-cavitydetuning:end)*sqrt(transmission);    
+    end
+    else
+        oldfield=radfield(end,:)*transmission;
     end
     pause(0.5)
     
@@ -167,6 +170,7 @@ compute_undulator_field_v5h
         legend('oldfield','filterfield')
 
     subplot(1,2,2)
+    
     filterfield = ifft(ifftshift(fftshift(fft(oldfield) ).*filter3));
     plot(power(end,:),'k')
     hold on
@@ -176,17 +180,19 @@ compute_undulator_field_v5h
     hold off
     pause(0.5)
     legend('power','filterfield','oldfield','profile_b')
+    if param.itdp==1
     oldfield = filterfield;
+    end
     firstpass = 0;                                  % Start recirculation
 %         saveas(gcf,[figdir,'field_',num2str(npasses),'.png'])
-        figure(2)
-%                 saveas(gcf,[figdir,'outfig_',num2str(npasses),'.png'])
-
-        figure(3)
-%                         saveas(gcf,[figdir,'contour_',num2str(npasses),'.png'])
-
-        figure(4)
-%                                 saveas(gcf,[figdir,'spec_',num2str(npasses),'.png'])
+%         figure(2)
+% %                 saveas(gcf,[figdir,'outfig_',num2str(npasses),'.png'])
+% 
+%         figure(3)
+% %                         saveas(gcf,[figdir,'contour_',num2str(npasses),'.png'])
+% 
+%         figure(4)
+% %                                 saveas(gcf,[figdir,'spec_',num2str(npasses),'.png'])
                                 
 %                                 if npasses>1 & abs((mean(rad_vs_beam(:,npasses))-mean(rad_vs_beam(:,npasses-1)))/mean(rad_vs_beam(:,npasses)))<.01
 %                                     updatetapering=1;
@@ -235,14 +241,15 @@ plot(Eff)
 title('Eff')
 
         saveas(gcf,[figdir,perave_opti_str,'final_eff.png'])
-
+if param.itdp
 figure(300)
 contourf([1:size(rad_vs_beam,1)]*param.zsep*param.lambda0/c,[1:npassmax],rad_vs_beam')
 title('rad vs beam')
         saveas(gcf,[figdir,perave_opti_str,'final_beam.png'])
 
 colorscheme=cool(size(rad_vs_und,2));
-hold on
+hold off
+end
 
 figure(104)
 plot(blist)
@@ -250,4 +257,5 @@ hold off
 title('bunch factor in each run')
         saveas(gcf,[figdir,perave_opti_str,'bfactor.png'])
 meanEff=-mean(Eff);
+meanEff=-newbfactor;
 end

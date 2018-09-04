@@ -23,9 +23,11 @@ oldbfactor=mean(abs(bcomplex_old));
 newbfactor=mean(abs(bcomplex_new));
 titlestr=sprintf('oldbunching=%.2f newbunching=%.2f',oldbfactor,newbfactor);
 title(titlestr);
+hold off
 
 
 %%%slippage in prebuncher
+if param.itdp==1
 radfield_new=[];
 R56slippage = round(param.R56buncher/param.lambda0)*2/param.zsep;
     radfield_new(1,1:R56slippage-1)=0;
@@ -42,9 +44,15 @@ R56slippage = round(param.R56buncher/param.lambda0)*2/param.zsep;
 %     radfield_new(:,1:R56slippage)=[];
 
     oldfield=radfield_new;
+    
     firstpass=0;
    
     param.nslices=size(oldfield,2);
+else
+    oldfield=radfield(end,:);
+        firstpass=0;
+
+end
 %     
 %     thetap(:,1:R56slippage,:)=[];
 %     gammap(:,1:R56slippage,:)=[];
