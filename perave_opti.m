@@ -215,7 +215,7 @@ compute_undulator_field_v5h
 %                                     
 Kz_save(:,npasses)=Kz;
 end
-perave_opti_str=sprintf('Effmean=%.2e EffEnd=%.2e r56=%.2e ps=%.2f cd=%.f trans=%.2f ',mean(Eff),Eff(end),R56buncher,phaseshift,cavitydetuning,transmission);
+perave_opti_str=sprintf('Effmean=%.2e EffEnd=%.2e bfend=%.2f bfmean=%.2f r56=%.2e ps=%.2f cd=%.f trans=%.2f ',mean(Eff),Eff(end),newbfactor,mean(blist),R56buncher,phaseshift,cavitydetuning,transmission);
 
 %% Post-process stuff
 figure(100)
