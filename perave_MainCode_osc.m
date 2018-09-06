@@ -1,8 +1,7 @@
 %% PBPL PERiod AVErage 1D FEL simulation code %%
 %%% Input deck intended to be compatible with WafFEL, 1D period average, and GENESIS %%%
 %% P. Musumeci oscillator version %%
-function Eff = perave_opti(R56buncher, phaseshift, cavitydetuning, transmission)
-% clear all
+clear all
 close all
 
 %% physical constants
@@ -15,7 +14,6 @@ eps0 = 8.85418782e-12;                                           % eps_0
 mu0 = 1.256637e-6;                                               % mu_0
 IA = 17045;                                                      % Alfven current
 Z0 = 376.73;                                                     % Impedance of free space         
-
 %% Load the User Determined initial conditions
 clear power radfield thetap gammap bunch
 param.sigma_t = 3e-13/2;
@@ -60,8 +58,8 @@ calculate_3Dcorrection;
 
 
 %% Run the main integration routine
-% cavitydetuning = -30;    % In units of zsep
-% transmission = 0.66;      % Power transmission through one cavity pass 
+cavitydetuning = -30;    % In units of zsep
+transmission = 0.66;      % Power transmission through one cavity pass 
                                       % losses = 1 - transmission                                      
 sigma_omega = 0.003*param.nslices*param.zsep;     % Filter fractional bandwidth. 
 
@@ -238,4 +236,3 @@ figure(104)
 plot(blist)
 hold off
 title('bunch factor in each run')
-end

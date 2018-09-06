@@ -5,9 +5,7 @@ if getnewR56==1
                              Klz_mod=Klz*pi*param.lambda0/2*param.chi2;
                              Klz_mod=Klz/2/pi*param.lambda0*param.chi2;
     param.R56buncher=(1/pi)*param.gamma0^2*param.lambda0^2/(2*pi)/(param.K*(lwig)*Klz_mod)+drift_buncher/(2*param.gamma0^2);
-% R56buncher=0;
-% else
-%     R56buncher=param.R56buncher;
+param.R56buncher=0;
 end
 
 for islice = 1:size(gammap,2)
@@ -39,7 +37,7 @@ hold off
 
 
 %%%slippage in prebuncher
-if param.itdp==1 & param.R56buncher~=0
+if param.itdp==1
 radfield_new=[];
 R56slippage = round(param.R56buncher/param.lambda0)*2/param.zsep;
     radfield_new(1,1:R56slippage-1)=0;

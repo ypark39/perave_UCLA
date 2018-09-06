@@ -1,7 +1,7 @@
 %% PBPL PERiod AVErage 1D FEL simulation code %%
 %%% Input deck intended to be compatible with WafFEL, 1D period average, and GENESIS %%%
 %% P. Musumeci oscillator version %%
-function meanEff = perave_opti(R56buncher, phaseshift, cavitydetuning, transmission,npassmax)
+function [meanEff,Eff,blist] = perave_opti(R56buncher, phaseshift, cavitydetuning, transmission,npassmax)
 % clear all
 close all
 GIT_dir;
@@ -90,7 +90,7 @@ tapering_strength = 2;   % 0 max of slices at time 0
 % 
 % npassmax=60;
 rad_vs_beam=zeros(param.nslices,npassmax);
-
+getnewR56=0;
 for npasses = 1:npassmax
 %     clear power radfield thetap gammap bunch 
 clear power radfield bunch
@@ -150,7 +150,7 @@ compute_undulator_field_v5h
     oldfield(1,1:1+cavitydetuning+size(radfield,2)) = radfield(end,-cavitydetuning:end)*sqrt(transmission);    
     end
     else
-        oldfield=radfield(end,:)*transmission;
+        oldfield=radfield(end,:)*sqrt(transmission);
     end
     pause(0.5)
     
@@ -214,6 +214,10 @@ compute_undulator_field_v5h
     
 %                                     
 Kz_save(:,npasses)=Kz;
+% if npasses>=20
+% getnewR56=1;
+% end
+
 end
 perave_opti_str=sprintf('Effmean=%.2e EffEnd=%.2e r56=%.2e ps=%.2f cd=%.f trans=%.2f ',mean(Eff),Eff(end),R56buncher,phaseshift,cavitydetuning,transmission);
 
@@ -249,6 +253,7 @@ title('rad vs beam')
 
 colorscheme=cool(size(rad_vs_und,2));
 hold off
+
 end
 
 figure(104)
