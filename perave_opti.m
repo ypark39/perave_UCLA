@@ -257,5 +257,5 @@ hold off
 title('bunch factor in each run')
         saveas(gcf,[figdir,perave_opti_str,'bfactor.png'])
 meanEff=-mean(Eff);
-meanEff=-newbfactor;
+meanEff=-blist(end);
 end
