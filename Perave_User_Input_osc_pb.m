@@ -50,6 +50,7 @@ param.bunch = 0.5;                                                   % Initial b
 param.bunchphase = -param.psir-pi/2;                     % Initial bunching phase
 param.buncherAmp = 5;
 
+
 betax=4;
 emitx=2e-6;
 charge = 300e-12;
