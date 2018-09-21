@@ -26,16 +26,16 @@ thetapend=thetap(end,:,:);
 gammapend=reshape(gammapend,[size(gammap,2),param.Np]);
 thetapend=reshape(thetapend,[size(gammap,2),param.Np]);
 thetap_new=reshape(thetap_new,[size(gammap,2),param.Np]);
-figure(8)
-plot(thetapend(round(islice/2),:),gammapend(round(islice/2),:))
-hold on
-plot(thetap_new(round(islice/2),:),gammapend(round(islice/2),:))
-thetap(end,:,:)=thetap_new;
+% figure(8)
+% plot(thetapend(round(islice/2),:),gammapend(round(islice/2),:))
+% hold on
+% plot(thetap_new(round(islice/2),:),gammapend(round(islice/2),:))
+% thetap(end,:,:)=thetap_new;
 oldbfactor=mean(abs(bcomplex_old));
 newbfactor=mean(abs(bcomplex_new));
-titlestr=sprintf('R56buncher=%.2e oldbunching=%.2f newbunching=%.2f',param.R56buncher,oldbfactor,newbfactor);
-title(titlestr);
-hold off
+% titlestr=sprintf('R56buncher=%.2e oldbunching=%.2f newbunching=%.2f',param.R56buncher,oldbfactor,newbfactor);
+% title(titlestr);
+% hold off
 
 
 %%%slippage in prebuncher
@@ -48,11 +48,11 @@ R56slippage = round(param.R56buncher/param.lambda0)*2/param.zsep;
 %     else
 %             radfield_new(1,R56slippage:size(oldfield,2)) = oldfield(end,1:(size(oldfield,2)-R56slippage+1));
 %     end
-    figure(9)
-    plot(abs(radfield(end,:)));
-    hold on
-    plot(abs(radfield_new));
-    hold off
+%     figure(9)
+%     plot(abs(radfield(end,:)));
+%     hold on
+%     plot(abs(radfield_new));
+%     hold off
 %     radfield_new(:,1:R56slippage)=[];
 
     oldfield=radfield_new;

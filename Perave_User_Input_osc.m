@@ -52,11 +52,11 @@ param.buncherAmp = 5;
 betax=3;
 emitx=2e-6;
 charge = 300e-12;
-%param.sigma_t = 40e-15;
+%param.sigma_t = 40e-15;;
 if (param.beamdistribution == 1)
-    param.I = charge/sqrt(2*pi)/param.sigma_t              % beam current 
+    param.I = charge/sqrt(2*pi)/param.sigma_t     ;         % beam current 
 else
-    param.I = charge/2/param.sigma_t              % beam current 
+    param.I = charge/2/param.sigma_t     ;        % beam current 
 end
 
 param.sigmax = sqrt(betax*emitx/gamma0);            % beam radius

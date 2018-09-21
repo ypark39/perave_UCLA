@@ -109,22 +109,22 @@ loadtapering=0;
 
 perave_core_v6;
 perave_R56;
-figure(7)
-    title(titlestr);
-    subplot(1,2,1)
-        hold on
-      plot(abs(fftshift(fft(oldfield))),'r');
-
-  
-        legend('oldfield')
-
-    subplot(1,2,2)
-
-    plot(abs(oldfield).^2/max(abs(oldfield).^2),'r')
-            hold on
-
-    plot(profile_b,'b')
-    hold off
+% figure(7)
+%     title(titlestr);
+%     subplot(1,2,1)
+%         hold on
+%       plot(abs(fftshift(fft(oldfield))),'r');
+% 
+%   
+%         legend('oldfield')
+% 
+%     subplot(1,2,2)
+% 
+%     plot(abs(oldfield).^2/max(abs(oldfield).^2),'r')
+%             hold on
+% 
+%     plot(profile_b,'b')
+%     hold off
 blist(npasses)=newbfactor;
 Perave_User_Input_osc;
 % param.prebunching=1; %Turnoff prebuncher
@@ -135,8 +135,8 @@ end
 compute_undulator_field_v5h
 
     perave_core_v6;
-    disp(['Simulation time = ',num2str(toc(t0)./60),' min'])
-    perave_postprocessor_v6   
+    disp(['Simulation time = ',num2str(toc(t0)./60),' min']);
+    perave_postprocessor_v6   ;
     rad_vs_und(:,npasses) = sum(power,2)*param.lambda0*param.zsep/c;
     
     rad_vs_beam(:,npasses) = power(end,:);
@@ -152,34 +152,34 @@ compute_undulator_field_v5h
     else
         oldfield=radfield(end,:)*sqrt(transmission);
     end
-    pause(0.5)
+    pause(0.5);
     
     
-    perave_filter;
+%     perave_filter;
 
     %%
-    figure(10)
-    titlestr=sprintf('npass=%.f cavitydetuning=%.2f transmission=%.2f Q=%.2e',npasses,cavitydetuning,transmission,Q);
-    title(titlestr);
-    subplot(1,2,1)
-        hold on
-      plot(abs(fftshift(fft(oldfield))),'r');
-    plot(abs(fftshift(fft(oldfield)).*filter3),'g');
-
-  
-        legend('oldfield','filterfield')
-
-    subplot(1,2,2)
-    
-    filterfield = ifft(ifftshift(fftshift(fft(oldfield) ).*filter3));
-    plot(power(end,:),'k')
-    hold on
-    plot(abs(filterfield).^2/377*param.A_e,'g')
-    plot(abs(oldfield).^2/377*param.A_e,'r')
-    plot(profile_b*max(power(end,:))*0.5,'b')
-    hold off
-    pause(0.5)
-    legend('power','filterfield','oldfield','profile_b')
+%     figure(10)
+%     titlestr=sprintf('npass=%.f cavitydetuning=%.2f transmission=%.2f Q=%.2e',npasses,cavitydetuning,transmission,Q);
+%     title(titlestr);
+%     subplot(1,2,1)
+%         hold on
+%       plot(abs(fftshift(fft(oldfield))),'r');
+%     plot(abs(fftshift(fft(oldfield)).*filter3),'g');
+% 
+%   
+%         legend('oldfield','filterfield')
+% 
+%     subplot(1,2,2)
+%     
+%     filterfield = ifft(ifftshift(fftshift(fft(oldfield) ).*filter3));
+%     plot(power(end,:),'k')
+%     hold on
+%     plot(abs(filterfield).^2/377*param.A_e,'g')
+%     plot(abs(oldfield).^2/377*param.A_e,'r')
+%     plot(profile_b*max(power(end,:))*0.5,'b')
+%     hold off
+%     pause(0.5)
+%     legend('power','filterfield','oldfield','profile_b')
     if param.itdp==1
     oldfield = filterfield;
     end
@@ -219,48 +219,49 @@ Kz_save(:,npasses)=Kz;
 % end
 
 end
-perave_opti_str=sprintf('Effmean=%.2e EffEnd=%.2e bfend=%.2f bfmean=%.2f r56=%.2e ps=%.2f cd=%.f trans=%.2f ',mean(Eff),Eff(end),newbfactor,mean(blist),R56buncher,phaseshift,cavitydetuning,transmission);
+perave_opti_str=sprintf('Effmean=%.3e EffEnd=%.3e Effstd=%.3e bfend=%.4f bfmean=%.4f bfstd=%.4f r56=%.4e ps=%.4f cd=%.f trans=%.2f ',mean(Eff),mean(Eff(end-10:end)),std(Eff(end-10:end)),mean(blist),mean(blist(end-10:end)),std(blist(end-10:end)),R56buncher,phaseshift,cavitydetuning,transmission);
 
 %% Post-process stuff
-figure(100)
-plot(max(rad_vs_und),'b')
-title('max rad vs und')
-        saveas(gcf,[figdir,perave_opti_str,'final_radvsund.png'])
-
-figure(101)
-plot([1:1:param.Nsnap]*param.stepsize,rad_vs_und(:,end),'r')
-hold on
-plot([1:1:param.Nsnap]*param.stepsize, meanenergy*charge*511000)
-xlim([0,param.Nsnap*param.stepsize])
-title('Radiation energy along undulator')
-        saveas(gcf,[figdir,perave_opti_str,'final_radenergy.png'])
-hold off
-figure(102)
-plot(PL)
-title('pulselength')
-        saveas(gcf,[figdir,perave_opti_str,'final_pulselength.png'])
+% figure(100)
+% plot(max(rad_vs_und),'b')
+% title('max rad vs und')
+% %         saveas(gcf,[figdir,perave_opti_str,'final_radvsund.png'])
+% 
+% figure(101)
+% plot([1:1:param.Nsnap]*param.stepsize,rad_vs_und(:,end),'r')
+% hold on
+% plot([1:1:param.Nsnap]*param.stepsize, meanenergy*charge*511000)
+% xlim([0,param.Nsnap*param.stepsize])
+% title('Radiation energy along undulator')
+%         saveas(gcf,[figdir,perave_opti_str,'final_radenergy.png'])
+% hold off
+% figure(102)
+% plot(PL)
+% title('pulselength')
+%         saveas(gcf,[figdir,perave_opti_str,'final_pulselength.png'])
 
 figure(103)
 plot(Eff)
 title('Eff')
 
         saveas(gcf,[figdir,perave_opti_str,'final_eff.png'])
-if param.itdp
-figure(300)
-contourf([1:size(rad_vs_beam,1)]*param.zsep*param.lambda0/c,[1:npassmax],rad_vs_beam')
-title('rad vs beam')
-        saveas(gcf,[figdir,perave_opti_str,'final_beam.png'])
+% if param.itdp
+% figure(300)
+% contourf([1:size(rad_vs_beam,1)]*param.zsep*param.lambda0/c,[1:npassmax],rad_vs_beam')
+% title('rad vs beam')
+%         saveas(gcf,[figdir,perave_opti_str,'final_beam.png'])
 
-colorscheme=cool(size(rad_vs_und,2));
-hold off
+% colorscheme=cool(size(rad_vs_und,2));
+% hold off
 
-end
+% end
 
 figure(104)
 plot(blist)
 hold off
 title('bunch factor in each run')
         saveas(gcf,[figdir,perave_opti_str,'bfactor.png'])
+        save([figdir,perave_opti_str,'data.mat'],'Eff','blist');
 meanEff=-mean(Eff);
 meanEff=-blist(end);
 end
