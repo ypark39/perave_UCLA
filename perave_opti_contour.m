@@ -14,7 +14,7 @@ blist_mean_totlist(j1,j2)=mean(blist);
 end
 
 figure
-contourf(R56_list,transmission_list,Eff_end_totlist');
+contourf(R56_list,transmission_list,Eff_end_totlist);
 
 figure
 contourf(R56_list,transmission_list,blist_end_totlist);
