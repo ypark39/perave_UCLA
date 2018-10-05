@@ -2,8 +2,8 @@
 %%%%User entered parameters%%%%%
 %% from Duris et al. TESSO paper 
 %% Prebuncher Parameters
-param.R56buncher=R56buncher; 16e-6;16e-6;
-param.phaseshift=phaseshift;1.8;
+param.R56buncher=20e-6;
+param.phaseshift=1.8;
 %% Undulator parameters
 param.lambdau = 3.2e-2;                                 % undulator period (m)
 param.K = 2.82; %e0*Bfield*/me/c/ku;               % RMS undulator parameter

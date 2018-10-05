@@ -1,14 +1,14 @@
 thetap_new=[];
 drift_buncher=28*.032;
-if getnewR56==1
-                             Klz = mean(abs(radfield(end,1:param.nslices)),2);
-                             Klz_mod=Klz*pi*param.lambda0/2*param.chi2;
-                             Klz_mod=Klz/2/pi*param.lambda0*param.chi2;
-    param.R56buncher=(1/pi)*param.gamma0^2*param.lambda0^2/(2*pi)/(param.K*(lwig)*Klz_mod)+drift_buncher/(2*param.gamma0^2);
+% if getnewR56==1
+%                              Klz = mean(abs(radfield(end,1:param.nslices)),2);
+%                              Klz_mod=Klz*pi*param.lambda0/2*param.chi2;
+%                              Klz_mod=Klz/2/pi*param.lambda0*param.chi2;
+%     param.R56buncher=(1/pi)*param.gamma0^2*param.lambda0^2/(2*pi)/(param.K*(lwig)*Klz_mod)+drift_buncher/(2*param.gamma0^2);
 % R56buncher=0;
 % else
 %     R56buncher=param.R56buncher;
-end
+% end
 
 for islice = 1:size(gammap,2)
     gamma_avg=mean(gammap(end,islice,:));
