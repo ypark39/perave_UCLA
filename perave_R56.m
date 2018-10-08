@@ -62,8 +62,6 @@ else
 
 end
 
-param.prebunched=1;
-    
 %     thetap(:,1:R56slippage,:)=[];
 %     gammap(:,1:R56slippage,:)=[];
 %     thetap_R56(1:R56slippage,:)=[];

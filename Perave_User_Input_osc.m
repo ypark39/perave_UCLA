@@ -27,9 +27,8 @@ Nslip=round(param.Nsnap/param.zsep);
 param.shotnoise = 1;
 param.lambda0 = 266e-9;                                    % seed wavelength (m)
 param.k = 2*pi/param.lambda0;                                     % wavenumber in free space
-if param.prebunching~=2
 param.nslices =4*Nslip+4*round(param.sigma_t/param.zsep/param.lambda0*c);
-end
+
 if(~param.itdp)
     param.nslices = 1;
 end
@@ -75,7 +74,7 @@ param.waist = sqrt(A_mode*2/pi);
 zr = pi*param.waist^2/param.lambda0;                          % Rayleigh length of seed (m)
 param.E0 = sqrt(2*P0/c/eps0/A_mode/2);                        % Assume circular polarization
 param.slippage = param.nslices/2*param.lambda0*param.zsep/c;
-% param.sigma_l = 2400e-15;
+param.sigma_l = 2400e-15;
 
 %% Simplifying constants
 param.chi2 = e0/me/c^2;

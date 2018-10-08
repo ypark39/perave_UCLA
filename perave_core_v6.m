@@ -36,9 +36,6 @@ if ~firstpass
     radfield(1,:) = oldfield;
 end
 
-if param.prebunched
-        radfield(1,:) = oldfield;
-end
 
 thetap = zeros(param.Nsnap,param.nslices,Np);
 gammap=zeros(param.Nsnap,param.nslices,Np);
@@ -75,9 +72,10 @@ if (param.prebunching < 0)
         end
 end
 
-if param.prebunched
+if (param.prebunching == 2)
     thetap(1,:,:)=thetap_R56;
     gammap(1,:,:)=gammapend;
+    radfield(1,:) = oldfield;
 end
 
 

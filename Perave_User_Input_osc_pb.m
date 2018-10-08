@@ -18,7 +18,7 @@ param.psir = pi/6;
 param.phasespacemovie=0;
 param.itdp = 0;
 param.prebunching = 0;                                                                  % set to 1 to start from a pre-bunched beam. 
-param.prebunched=0;
+
 param.changeresphase = 0;
 saveoutput=0;
 % Set simulation length and # of snapshots
