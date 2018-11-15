@@ -17,7 +17,7 @@ Z0 = 376.73;                                                     % Impedance of 
 
 %% Load the User Determined initial conditions
 clear power radfield thetap gammap bunch
-param.sigma_t = 3e-13/2;
+param.sigma_t = 90e-6/3e8;
 param.use3Dcorrection  = 1;
 param.beamdistribution = 2;       % Using GENESIS flag: 2-uniform 1-gaussian
 param.laserdistribution = 1;         % Using GENESIS flag: 2-uniform 1-gaussian
@@ -45,11 +45,10 @@ end
 calculate_3Dcorrection; 
 
 %% Run the main integration routine
-cavitydetuning = -20;    % In units of zsep
-transmission = 0.66;      % Power transmission through one cavity pass 
+cavitydetuning = -16;    % In units of zsep
+transmission = 0.7;      % Power transmission through one cavity pass 
                                       % losses = 1 - transmission                                      
 sigma_omega = 0.003*param.nslices*param.zsep;     % Filter fractional bandwidth. 
-
 firstpass =1;
 tapering_strength = 2;   % 0 max of slices at time 0 
                                       % 1 max of slices
@@ -60,18 +59,16 @@ tapering_strength = 2;   % 0 max of slices at time 0
     for jfreq = 1:param.nslices;
     y = (jfreq-param.nslices/2)/sigma_omega;
     if(y>=1)
-        filter2(jfreq) = y-sqrt(y.^2-1); %ryan lindberg (KJ Kim) bragg mirror
+        filter2(jfreq) = y-sqrt(y.^2-1);
     elseif(y<=-1)
         filter2(jfreq) = (y+sqrt(y.^2-1));
     else
         filter2(jfreq) = y+i*sqrt(1-y.^2);
     end
         omega_m=param.nslices/2;
-        Q = 0.3;
-        filter3(jfreq) = 1i*jfreq/Q / (omega_m^2-jfreq^2+1i*jfreq/Q);   %dispersion
-    end
-
-    
+        Q = 1/sigma_omega;
+        filter3(jfreq) = 1i*jfreq/Q / (omega_m^2-jfreq^2+1i*jfreq/Q);   
+    end    
     filterdelay = round(param.nslices/2/pi/sigma_omega);
     figure(200)
     plot(filter)
@@ -79,53 +76,48 @@ tapering_strength = 2;   % 0 max of slices at time 0
     plot(abs(filter2))
     plot(abs(filter3),'k')
     hold off
-    legend('filter','filter2','filter3')
-    GIT_dir
-        figdir=[datadir,'peraveosc\'];
-        mkdir(figdir);
-        saveas(gcf,[figdir,'filter.png'])
     figure(201)
     plot(angle(filter2))
     hold on
     plot(angle(filter3),'k')
     hold off
-    
-    
-   
-
  %% Oscillator loop
-for npasses = 1:100
+for npasses = 1:10
+    
     clear power radfield thetap gammap bunch
     t0 = tic;
+    Perave_User_Input_osc_pb;
     perave_core_v6;
+    perave_R56;
+    
+    clear power radfield thetap gammap bunch
+    Perave_User_Input_osc;
+    compute_undulator_field_v5h;
+    perave_core_v6;
+    
     disp(['Simulation time = ',num2str(toc(t0)./60),' min'])
     perave_postprocessor_v6   
     rad_vs_und(:,npasses) = sum(power,2)*param.lambda0*param.zsep/c;
-    
     rad_vs_beam(:,npasses) = power(end,:);
     Eff(npasses) = Efficiency;
     PL(npasses) = pulselength;
     oldfield(1:param.nslices) =0;
     
+    if param.itdp==1
     if cavitydetuning>0
     oldfield(1,cavitydetuning+1:cavitydetuning+size(radfield,2)) = radfield(end,:)*sqrt(transmission);
     else
     oldfield(1,1:1+cavitydetuning+size(radfield,2)) = radfield(end,-cavitydetuning:end)*sqrt(transmission);    
     end
     pause(0.5)
-
+    else
+        oldfield=radfield(end)*sqrt(transmission);
+    end
+    
     %%
     figure(8)
-    titlestr=sprintf('npass=%.f cavitydetuning=%.2f transmission=%.2f Q=%.2e',npasses,cavitydetuning,transmission,Q);
-    title(titlestr);
     subplot(1,2,1)
-        hold on
-      plot(abs(fftshift(fft(oldfield))),'r');
-    plot(abs(fftshift(fft(oldfield)).*filter3),'g');
-
-  
-        legend('oldfield','filterfield')
-
+    plot(abs(fftshift(fft(oldfield)).*filter3));
     subplot(1,2,2)
     filterfield = ifft(ifftshift(fftshift(fft(oldfield) ).*filter3));
     plot(power(end,:),'k')
@@ -133,51 +125,34 @@ for npasses = 1:100
     plot(abs(filterfield).^2/377*param.A_e,'g')
     plot(abs(oldfield).^2/377*param.A_e,'r')
     plot(profile_b*max(power(end,:))*0.5,'b')
+    
     hold off
     pause(0.5)
-    legend('power','filterfield','oldfield','profile_b')
-%     oldfield = filterfield;
+    oldfield = filterfield;
+    
+    
     firstpass = 0;                                  % Start recirculation
-        saveas(gcf,[figdir,'field_',num2str(npasses),'.png'])
-        figure(2)
-                saveas(gcf,[figdir,'outfig_',num2str(npasses),'.png'])
-
-        figure(3)
-                        saveas(gcf,[figdir,'contour_',num2str(npasses),'.png'])
-
-        figure(4)
-                                saveas(gcf,[figdir,'spec_',num2str(npasses),'.png'])
-
 end
 %% Post-process stuff
 figure(100)
 plot(max(rad_vs_und),'b')
-title('max rad vs und')
-        saveas(gcf,[figdir,'final_radvsund.png'])
-
 figure(101)
 plot([1:1:param.Nsnap]*param.stepsize,rad_vs_und(:,end),'r')
 hold on
 plot([1:1:param.Nsnap]*param.stepsize, meanenergy*charge*511000)
 xlim([0,param.Nsnap*param.stepsize])
 title('Radiation energy along undulator')
-        saveas(gcf,[figdir,'final_radenergy.png'])
-
 figure(102)
 plot(PL)
-title('pulselength')
-        saveas(gcf,[figdir,'final_pulselength.png'])
-
+title 'pulselength'
 figure(103)
 plot(Eff)
 title('Eff')
-        saveas(gcf,[figdir,'final_eff.png'])
-
+if param.itdp==1
 figure(300)
 contourf([1:size(rad_vs_beam,1)]*param.zsep*param.lambda0/c,[1:100],rad_vs_beam')
-title('rad vs beam')
-        saveas(gcf,[figdir,'final_beam.png'])
-
-colorscheme=cool(size(rad_vs_und,2));
-hold on
-
+end
+figure(104)
+plot(blist)
+hold off
+title('bunch factor in each run')

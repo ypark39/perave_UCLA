@@ -14,15 +14,15 @@ param.psir = pi/6;
 
 %% Simulation control options
 param.phasespacemovie=0;
-param.itdp = 1;
-param.prebunching = 1;                                                                  % set to 1 to start from a pre-bunched beam. 
+param.itdp = 0;
+param.prebunching = 2;   %0 = no prebuncher 1 = numeric prebunch 2 = prebunched by R56                                                                % set to 1 to start from a pre-bunched beam. 
 param.changeresphase = 0;
 saveoutput=0;
 % Set simulation length and # of snapshots
 param.delz=1;
 param.und_periods = round(lwig/param.lambdau);                         % number of undulator periods to simulate
 param.Nsnap = round(lwig/param.lambdau/param.delz);                % number of snapshots to take over the length of the undulator
-param.zsep = 5;                                                              
+param.zsep = 4;                                                              
 Nslip=round(param.Nsnap/param.zsep);
 param.shotnoise = 1;
 param.lambda0 = 266e-9;                                    % seed wavelength (m)
@@ -48,14 +48,14 @@ param.bunch = 0.7;                                                   % Initial b
 param.bunchphase = -param.psir-pi/2;                     % Initial bunching phase
 param.buncherAmp = 5;
 
-betax=4;
+betax=2;
 emitx=2e-6;
 charge = 300e-12;
 %param.sigma_t = 40e-15;
 if (param.beamdistribution == 1)
-    param.I = charge/sqrt(2*pi)/param.sigma_t              % beam current 
+    param.I = charge/sqrt(2*pi)/param.sigma_t   ;           % beam current 
 else
-    param.I = charge/2/param.sigma_t              % beam current 
+    param.I = charge/param.sigma_t   ;           % beam current 
 end
 
 param.sigmax = sqrt(betax*emitx/gamma0);            % beam radius
@@ -66,6 +66,11 @@ Simulation_temporal_window=param.nslices*param.zsep*param.lambda0/c;
 P0 =1e9; param.P0=P0;                                               % Peak input power (W) 
 A_mode = param.A_e;                                                     % 1D code. area is same for e_beam and radiation
 param.waist = sqrt(A_mode*2/pi);
+
+% zrayl=1.5;
+% w0=sqrt(zrayl*param.lambda0/pi);	param.waist=w0;% Laser Waist
+% param.sigma_l=w0/(2);           %Laser spot size
+
 zr = pi*param.waist^2/param.lambda0;                          % Rayleigh length of seed (m)
 param.E0 = sqrt(2*P0/c/eps0/A_mode/2);                        % Assume circular polarization
 param.slippage = param.nslices/2*param.lambda0*param.zsep/c;
